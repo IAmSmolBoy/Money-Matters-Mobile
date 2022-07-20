@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "927731080648",
+    "project_id": "money-matters-mobile-49bcc",
+    "storage_bucket": "money-matters-mobile-49bcc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:927731080648:android:ccfb6cbea0f857d06434fd",
+        "android_client_info": {
+          "package_name": "com.example.moneymattersmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "927731080648-8pcsn32n2jeijstosjtps99bgqql00lp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNLNsi07qUJ2gZ-wc9Gn3xcTgOXE0pxyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "927731080648-8pcsn32n2jeijstosjtps99bgqql00lp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

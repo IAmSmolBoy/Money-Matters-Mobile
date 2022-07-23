@@ -1,17 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moneymattersmobile/models/user.dart';
-import 'package:moneymattersmobile/screens/addTasnactionScreen.dart';
-import 'package:moneymattersmobile/screens/home.dart';
-import 'package:moneymattersmobile/models/pageInfo.dart';
-import 'package:moneymattersmobile/screens/reportsScreen.dart';
-
-//for navbar
-List<PageInfo> pageData = [
-  PageInfo("Reports", Icons.assessment, ReportsScreen()),
-  PageInfo("Home", Icons.home, HomeScreen()),
-  PageInfo("Add Transaction", Icons.add, AddTransactionScreen()),
-];
 
 //for general use
 List<String> monthList = [ "None", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
@@ -46,4 +37,10 @@ var bodyText2 = GoogleFonts.poppins(textStyle: const TextStyle(
 ));
 
 //current user
-User? currUser;
+Future<User?> getUser() async {
+  DocumentSnapshot<Map<String, dynamic>> currUserJSON = await FirebaseFirestore.instance
+    .collection("users")
+    .doc(Auth.FirebaseAuth.instance.currentUser!.uid)
+    .get();
+  return User.fromJSON(currUserJSON.data() ?? <String, dynamic>{});
+}

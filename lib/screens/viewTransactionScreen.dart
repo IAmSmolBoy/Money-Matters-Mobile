@@ -37,6 +37,7 @@ class ViewTransactionScreen extends StatelessWidget {
           itemCount: transactionInfo.length
         )
       ),
+      logo: false,
     );
   }
 }

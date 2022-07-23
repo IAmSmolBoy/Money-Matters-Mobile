@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
 import 'package:moneymattersmobile/main.dart';
 import 'package:moneymattersmobile/models/user.dart';
@@ -41,106 +42,123 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20
-                ),
-                child: Column(
-                  children: [
-                    Flexible(
-                      child: Form(
-                        key: form,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Register", style: headlines,),
-                            Text("Create new account to get started.", style: bodyText2,),
-                            const SizedBox(height: 50,),
-                            RegisterSignInTextField(
-                              TextInputType.text,
-                              "Username",
-                              (val) { widget.username = val!; },
-                              (val) =>
-                              val == null || val == "" ? "Enter a username" :
-                              val.length > 32 ? "Username cannot exceed 32 characters" :
-                              null,
-                            ),
-                            RegisterSignInTextField(
-                              TextInputType.emailAddress,
-                              "Email",
-                              (val) { widget.email = val!; },
-                              (val) => val == null ? "Enter an email" :
-                              !EmailValidator.validate(val) ? "Enter a valid email" :
-                              null,
-                            ),
-                            RegisterSignInPassword(
-                              passwordObscurity,
-                              () => setState(() { passwordObscurity = !passwordObscurity; }),
-                              (val) { widget.password = val!; },
-                              (val) => val == null || val == "" ? "Enter a password" :
-                              null,
-                            ),
-                          ],
+      body: GestureDetector(
+        onTap: () { FocusScope.of(context).unfocus(); },
+        child: SafeArea(
+          child: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20
+                  ),
+                  child: Column(
+                    children: [
+                      Flexible(
+                        child: Form(
+                          key: form,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Register", style: headlines,),
+                              Text("Create new account to get started.", style: bodyText2,),
+                              const SizedBox(height: 50,),
+                              RegisterSignInTextField(
+                                TextInputType.text,
+                                "Username",
+                                (val) { widget.username = val!; },
+                                (val) =>
+                                val == null || val == "" ? "Enter a username" :
+                                val.length > 32 ? "Username cannot exceed 32 characters" :
+                                null,
+                              ),
+                              RegisterSignInTextField(
+                                TextInputType.emailAddress,
+                                "Email",
+                                (val) { widget.email = val!; },
+                                (val) => val == null || val == "" ? "Enter an email" :
+                                !EmailValidator.validate(val) ? "Enter a valid email" :
+                                null,
+                              ),
+                              RegisterSignInPassword(
+                                passwordObscurity,
+                                () => setState(() { passwordObscurity = !passwordObscurity; }),
+                                (val) { widget.password = val!; },
+                                (val) => val == null || val == "" ? "Enter a password" :
+                                null,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Already have an account? ", style: bodyText,),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero
-                          ),
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                child: SignInScreen(),
-                                childCurrent: widget,
-                                type: PageTransitionType.rightToLeftJoined
-                              )
-                            );
-                          },
-                          child: Text("Sign In", style: bodyText.copyWith(color: Colors.white),),
-                        ),
-                      ],
-                    ),
-                    RegisterSignInButton(
-                      "Register",
-                      () async {
-                        print(form.currentState!.validate());
-                        if (form.currentState!.validate()) {
-                          form.currentState!.save();
-                          final UserDoc = FirebaseFirestore.instance.collection("users").doc();
-                          User newUser = User(UserDoc.id, widget.username!, widget.email!, widget.password!);
-                          // userList.add(newUser);
-                          final userJSON = newUser.toJSON();
-                          await UserDoc.set(userJSON);
-                          currUser = newUser;
-                          Navigator.push(
-                            context,
-                            PageTransition(
-                              childCurrent: widget,
-                              child: MainScreen(),
-                              type: PageTransitionType.topToBottomJoined
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Already have an account? ", style: bodyText,),
+                          TextButton(
+                            style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero
                             ),
-                          );
-                        }
-                      },
-                      Colors.white,
-                      Colors.black87,
-                    )
-                  ],
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                PageTransition(
+                                  child: SignInScreen(),
+                                  childCurrent: widget,
+                                  type: PageTransitionType.rightToLeftJoined
+                                )
+                              );
+                            },
+                            child: Text("Sign In", style: bodyText.copyWith(color: Colors.white),),
+                          ),
+                        ],
+                      ),
+                      RegisterSignInButton(
+                        "Register",
+                        () async {
+                          if (form.currentState!.validate()) {
+                            form.currentState!.save();
+                            Auth.FirebaseAuth auth = Auth.FirebaseAuth.instance;
+                            try {
+                              Auth.UserCredential newAuthUser = await auth.createUserWithEmailAndPassword(
+                                email: widget.email!,
+                                password: widget.password!,
+                              );
+                              DocumentReference<Map<String, dynamic>> userDoc = FirebaseFirestore.instance.collection("users").doc(newAuthUser.user != null ? newAuthUser.user!.uid : null);
+                              User newUser = User(userDoc.id, widget.username!, widget.email!, widget.password!);
+                              Map<String, dynamic> userJSON = newUser.toJSON();
+                              await userDoc.set(userJSON);
+                              // currUser = newUser;
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  childCurrent: widget,
+                                  child: const MainScreen(),
+                                  type: PageTransitionType.topToBottomJoined
+                                ),
+                              );
+                            } on Auth.FirebaseAuthException catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                    e.message ?? "",
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                )
+                              );
+                            }
+                          }
+                        },
+                        Colors.white,
+                        Colors.black87,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

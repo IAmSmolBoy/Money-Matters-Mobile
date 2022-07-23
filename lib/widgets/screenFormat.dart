@@ -6,10 +6,9 @@ import 'package:page_transition/page_transition.dart';
 
 class ScreenFormat extends StatelessWidget {
   TabController? tc;
-  Widget? appBarLogo;
   Widget childWidget;
-  bool settings;
-  ScreenFormat(this.childWidget, {this.settings = true, this.appBarLogo, this.tc, Key? key}) : super(key: key);
+  bool settings, logo;
+  ScreenFormat(this.childWidget, {this.settings = true, this.logo = true, this.tc, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,16 @@ class ScreenFormat extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                appBarLogo ??
+                logo ?
+                RichText(
+                  text: const TextSpan(
+                    style: TextStyle(fontSize: 25.0,),
+                    children: <TextSpan>[
+                      TextSpan(text: 'Money', style: TextStyle(color: Colors.green)),
+                      TextSpan(text: 'Matters'),
+                    ],
+                  ),
+                ) :
                 IconButton(
                   alignment: Alignment.centerLeft,
                   padding: EdgeInsets.zero,

@@ -28,7 +28,7 @@ class FilterDropdown extends StatelessWidget {
         color: textColor,
       ),
       items: itemList.map((e) => DropdownMenuItem<String>(child: Text(e), value: e)).toList(),
-      onChanged: (e) { changeVal == null ? print(e) : changeVal!(itemList.indexOf(e!)); }
+      onChanged: (e) { if (changeVal != null) changeVal!(itemList.indexOf(e!)); }
     );
   }
 

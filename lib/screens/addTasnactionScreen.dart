@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moneymattersmobile/main.dart';
 import 'package:moneymattersmobile/models/transaction.dart' as TransModel;
+import 'package:moneymattersmobile/models/user.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/screens/home.dart';
 import 'package:moneymattersmobile/widgets/addTransactionFields/dropdownFormField.dart';
@@ -143,42 +144,57 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         initialVal: widget.transaction == null ? "" :
         DateFormat("dd/MM/yyyy").format(widget.transaction!.date),
       ),
-      ElevatedButton(
-          style: ElevatedButton.styleFrom(primary: Colors.white),
-          child: const Text("Save",
-            style: TextStyle(
-              color: Colors.black87,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          onPressed: () {
-            if (form.currentState!.validate()) {
-              form.currentState!.save();
-              if (transactionType == "Expense") amt = -amt!;
-              final transactionDoc = FirebaseFirestore.instance.collection("transactions").doc();
-              TransModel.Transaction formTrans = TransModel.Transaction(
-                id: transactionDoc.id,
-                date: selectedDate!,
-                category: widget.category,
-                description: desc!,
-                amount: amt!
-              );
-              if (widget.transaction != null) {
-                final editTransactionDoc = FirebaseFirestore.instance.collection("transactions").doc("${widget.transaction!.id}");
-                formTrans.id = "${widget.transaction!.id}";
-                editTransactionDoc.update(formTrans.toJSON());
-                Navigator.pop(context);
-              }
-              else {
-                transactionDoc.set(formTrans.toJSON());
-              }
-              setState(() {
-                form.currentState!.reset();
-                dropdown.currentState!.reset();
-                widget.categories = [];
-              });
-            }
+      FutureBuilder(
+        future: getUser(),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          late User currUser;
+          if (snapshot.hasError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("${snapshot.error}"))
+            );
           }
+          else if (snapshot.hasData) {
+            currUser = snapshot.data;
+          }
+          return ElevatedButton(
+            style: ElevatedButton.styleFrom(primary: Colors.white),
+            child: const Text("Save",
+              style: TextStyle(
+                color: Colors.black87,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            onPressed: () {
+              if (form.currentState!.validate()) {
+                form.currentState!.save();
+                if (transactionType == "Expense") amt = -amt!;
+                final transactionDoc = FirebaseFirestore.instance.collection("transactions").doc();
+                TransModel.Transaction formTrans = TransModel.Transaction(
+                  id: transactionDoc.id,
+                  userId: currUser.id,
+                  date: selectedDate!,
+                  category: widget.category,
+                  description: desc!,
+                  amount: amt!
+                );
+                if (widget.transaction != null) {
+                  final editTransactionDoc = FirebaseFirestore.instance.collection("transactions").doc("${widget.transaction!.id}");
+                  formTrans.id = "${widget.transaction!.id}";
+                  editTransactionDoc.update(formTrans.toJSON());
+                  Navigator.pop(context);
+                }
+                else {
+                  transactionDoc.set(formTrans.toJSON());
+                }
+                setState(() {
+                  form.currentState!.reset();
+                  dropdown.currentState!.reset();
+                  widget.categories = [];
+                });
+              }
+            }
+          );
+        },
       )
     ];
 

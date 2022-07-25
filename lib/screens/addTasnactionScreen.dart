@@ -6,6 +6,7 @@ import 'package:moneymattersmobile/models/transaction.dart' as TransModel;
 import 'package:moneymattersmobile/models/user.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/screens/home.dart';
+import 'package:moneymattersmobile/services/auth.dart';
 import 'package:moneymattersmobile/widgets/addTransactionFields/dropdownFormField.dart';
 import 'package:moneymattersmobile/widgets/addTransactionFields/formFields.dart';
 import 'package:moneymattersmobile/widgets/screenFormat.dart';
@@ -145,7 +146,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         DateFormat("dd/MM/yyyy").format(widget.transaction!.date),
       ),
       FutureBuilder(
-        future: getUser(),
+        future: getCurrUser(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           late User currUser;
           if (snapshot.hasError) {

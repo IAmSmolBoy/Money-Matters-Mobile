@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
-import 'package:moneymattersmobile/models/pageInfo.dart';
 import 'package:moneymattersmobile/screenData.dart';
 
 class BottomNavBar extends StatefulWidget {

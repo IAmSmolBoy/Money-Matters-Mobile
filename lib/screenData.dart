@@ -35,12 +35,3 @@ var bodyText2 = GoogleFonts.poppins(textStyle: const TextStyle(
     fontSize: 28,
     fontWeight: FontWeight.w500
 ));
-
-//current user
-Future<User?> getUser() async {
-  DocumentSnapshot<Map<String, dynamic>> currUserJSON = await FirebaseFirestore.instance
-    .collection("users")
-    .doc(Auth.FirebaseAuth.instance.currentUser!.uid)
-    .get();
-  return User.fromJSON(currUserJSON.data() ?? <String, dynamic>{});
-}

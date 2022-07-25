@@ -8,7 +8,8 @@ class ScreenFormat extends StatelessWidget {
   TabController? tc;
   Widget childWidget;
   bool settings, logo;
-  ScreenFormat(this.childWidget, {this.settings = true, this.logo = true, this.tc, Key? key}) : super(key: key);
+  void Function()? settingsFunc;
+  ScreenFormat(this.childWidget, {this.settings = true, this.logo = true, this.tc, this.settingsFunc, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,7 @@ class ScreenFormat extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   alignment: Alignment.centerRight,
                   onPressed: () {
-                    Navigator.push(context, PageTransition(
+                    settingsFunc != null ? settingsFunc!() : Navigator.push(context, PageTransition(
                       child: SettingsScreen(),
                       childCurrent: this,
                       type: PageTransitionType.topToBottom,

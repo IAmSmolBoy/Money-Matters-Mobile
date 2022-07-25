@@ -148,7 +148,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                         email: getUserByUsername.email,
                                         password: widget.password!,
                                       );
-                                      // currUser = getUserByUsername;
                                       Navigator.push(
                                         context,
                                         PageTransition(

@@ -134,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 context,
                                 PageTransition(
                                   childCurrent: widget,
-                                  child: const MainScreen(),
+                                  child: MainScreen(),
                                   type: PageTransitionType.topToBottomJoined
                                 ),
                               );

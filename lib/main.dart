@@ -8,6 +8,7 @@ import 'package:moneymattersmobile/screens/home.dart';
 import 'package:moneymattersmobile/screens/registerScreen.dart';
 import 'package:moneymattersmobile/screens/reportsScreen.dart';
 import 'package:moneymattersmobile/screens/signInScreen.dart';
+import 'package:moneymattersmobile/services/auth.dart';
 import 'package:moneymattersmobile/widgets/screenFormat.dart';
 
 Future<void> main () async {
@@ -25,15 +26,22 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: const Color(0xff191720),
       ),
-      home: Auth.FirebaseAuth.instance.currentUser == null ? SignInScreen() : const MainScreen(),
+      home: Auth.FirebaseAuth.instance.currentUser == null ? SignInScreen() : MainScreen(),
     );
   }
-
 }
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
-
+  MainScreen({Key? key}) {
+    getCurrUser().then(
+      (value) {
+        auth.signInWithEmailAndPassword(
+          email: value?.email ?? "",
+          password: value?.password ?? "",
+        );
+      }
+    );
+  }
 
   @override
   State<MainScreen> createState() => _MainScreenState();

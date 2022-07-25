@@ -48,9 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
       future: readTransactions(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("${snapshot.error}"))
-          );
+            Future.delayed(Duration.zero,(){ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("${snapshot.error}"))
+            );
+          });
           return ScreenHeader("Reports", Container());
         }
         else {

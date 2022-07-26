@@ -40,12 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return FutureBuilder(
       future: readTransactions(),
-<<<<<<< Updated upstream
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.hasError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("${snapshot.error}"))
-=======
       builder: (BuildContext context, AsyncSnapshot<dynamic> transListSnapshot) {
         if (transListSnapshot.hasError) {
             Future.delayed(Duration.zero, () {
@@ -53,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 SnackBar(content: Text("${transListSnapshot.error}"))
               );
             }
->>>>>>> Stashed changes
           );
           return ScreenHeader("Reports", Container());
         }

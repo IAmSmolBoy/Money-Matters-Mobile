@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -23,10 +21,10 @@ Future uploadPfp(File? photo) async {
 Future<String> getPfpLink() async {
   User? user = await getCurrUser();
   if (user == null) return "User not found";
-  if (user.pfp == null) return "Photo not found";
+  if (user.pfp?.isEmpty ?? true) return "Photo not found";
   try {
     return await storage.ref("User ${user.id}").getDownloadURL();
   }
   on firebase_storage.FirebaseException catch (e) { return e.message ?? "Error"; }
+  catch(e) { return "Error"; }
 }
->>>>>>> Stashed changes

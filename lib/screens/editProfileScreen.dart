@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart' as Auth;
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import 'package:moneymattersmobile/models/user.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/services/auth.dart';
 import 'package:moneymattersmobile/services/firebase.dart';
+import 'package:moneymattersmobile/services/storage.dart';
 import 'package:moneymattersmobile/widgets/editProfileWidgets/editProfileTextField.dart';
 import 'package:moneymattersmobile/widgets/screenFormat.dart';
 import 'package:path/path.dart';
@@ -33,11 +34,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   GlobalKey<FormState> editProfileForm = GlobalKey<FormState>();
 
   String username = "", email = "", password = "";
-<<<<<<< Updated upstream
-=======
   String? currPfpURL;
   File? pfpImg;
->>>>>>> Stashed changes
 
   @override
   void initState() {
@@ -85,70 +83,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         } else if (userSnapshot.hasData) {
           currUser = userSnapshot.data;
         }
-<<<<<<< Updated upstream
-        return ScreenFormat(
-          Container(
-            padding: EdgeInsets.fromLTRB(
-              16, 25, 16, MediaQuery.of(context).viewInsets.bottom
-            ),
-            child: GestureDetector(
-              onTap: () { FocusScope.of(context).unfocus(); },
-              child: Form(
-                key: editProfileForm,
-                child: ListView(
-                  children: [
-                    Text(
-                      "Edit Profile",
-                      style: TextStyle(
-                          color: textColor,
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Center(
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: 130,
-                            height: 130,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 4,
-                                color: Colors.transparent,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                    spreadRadius: 2,
-                                    blurRadius: 10,
-                                    color: Colors.black.withOpacity(0.1),
-                                    offset: const Offset(0, 10)),
-                              ],
-                              shape: BoxShape.circle,
-                              // image: const DecorationImage(
-                              //   fit: BoxFit.cover,
-                              //   image: NetworkImage("https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg")
-                              // )
-                            ),
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              icon: Icon(
-                                Icons.account_circle_outlined,
-                                size: 130,
-                                color: textColor,
-                              ),
-                              onPressed: () async {
-                                final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-                                setState(() {
-                                  if (pickedFile != null) {
-                                    File? photo = File(pickedFile.path);
-                                    uploadFile(photo);
-                                  }
-                                });
-                              },
-                            ),
-=======
         return FutureBuilder<String?>(
           future: getPfpLink(),
           builder: (context, snapshot) {
@@ -200,7 +134,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ],
                                   shape: BoxShape.circle,
                                 ),
-                                child: currPfpURL?.isNotEmpty ?? false ?
+                                child: currUser != null && (currUser?.pfp ?? "").isNotEmpty || pfpImg != null ?
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       primary: Colors.transparent,
@@ -259,7 +193,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 )
                               )
                             ],
->>>>>>> Stashed changes
                           ),
                         ),
                         EditProfileTextField(
@@ -320,46 +253,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   color: Colors.black,
                                 ),
                               ),
-<<<<<<< Updated upstream
-                            )),
-                        ElevatedButton(
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            padding: const EdgeInsets.symmetric(horizontal: 50),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                            elevation: 2,
-                          ),
-                          child: const Text(
-                            "Save",
-                            style: TextStyle(
-                              fontSize: 14,
-                              letterSpacing: 2.2,
-                              color: Colors.black,
-                            ),
-                          ),
-                          onPressed: () async {
-                            Auth.User? firebaseUser = getCurrAuthUser();
-                            User? user = await getCurrUser();
-                            if (firebaseUser == null || user == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("User not found"),
-                                )
-                              );
-                              return;
-                            }
-                            if (editProfileForm.currentState != null && editProfileForm.currentState!.validate()) {
-                              editProfileForm.currentState!.save();
-                              await firebaseUser.updateEmail(email);
-                              await firebaseUser.updatePassword(password);
-                              User updatedUser = User(user.id, username, email, password);
-                              getUserDoc(user.id).update(updatedUser.toJSON());
-                              widget.settingsSetState(() {});
-                              Navigator.pop(context);
-                            }
-                          },
-=======
                               onPressed: () async {
                                 auth.User? firebaseUser = getCurrAuthUser();
                                 User? user = await getCurrUser();
@@ -399,7 +292,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         const SizedBox(
                           height: 50,
->>>>>>> Stashed changes
                         ),
                       ],
                     ),

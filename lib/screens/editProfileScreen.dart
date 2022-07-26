@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_auth/firebase_auth.dart' as Auth;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,7 +9,6 @@ import 'package:moneymattersmobile/models/user.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/services/auth.dart';
 import 'package:moneymattersmobile/services/firebase.dart';
-import 'package:moneymattersmobile/services/storage.dart';
 import 'package:moneymattersmobile/widgets/editProfileWidgets/editProfileTextField.dart';
 import 'package:moneymattersmobile/widgets/screenFormat.dart';
 import 'package:path/path.dart';
@@ -33,7 +33,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   GlobalKey<FormState> editProfileForm = GlobalKey<FormState>();
 
   String username = "", email = "", password = "";
-  File? pfpImg;
 
   @override
   void initState() {
@@ -47,6 +46,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
     );
     super.initState();
+  }
+  
+  Future uploadFile(File? photo) async {
+    if (photo == null) return;
+    // final fileName = basename(photo.path);
+    try {
+      final ref = firebase_storage.FirebaseStorage.instance
+          .ref('pfp');
+      await ref.putFile(photo);
+    } catch (e) {
+      print('error occured');
+    }
   }
 
   @override
@@ -99,31 +110,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     offset: const Offset(0, 10)),
                               ],
                               shape: BoxShape.circle,
+                              // image: const DecorationImage(
+                              //   fit: BoxFit.cover,
+                              //   image: NetworkImage("https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg")
+                              // )
                             ),
-                            child: pfpImg != null ?
-                              Image(
-                                image: FileImage(pfpImg!),
-                                height: 130,
-                                width: 130,
-                              ) :
-                              currUser?.pfp !=  ?
-                              :
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: Icon(
-                                  Icons.account_circle_outlined,
-                                  size: 130,
-                                  color: textColor,
-                                ),
-                                onPressed: () async {
-                                  final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-                                  setState(() {
-                                    if (pickedFile != null) {
-                                      pfpImg = File(pickedFile.path);
-                                    }
-                                  });
-                                },
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: Icon(
+                                Icons.account_circle_outlined,
+                                size: 130,
+                                color: textColor,
                               ),
+                              onPressed: () async {
+                                final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+                                setState(() {
+                                  if (pickedFile != null) {
+                                    File? photo = File(pickedFile.path);
+                                    uploadFile(photo);
+                                  }
+                                });
+                              },
+                            ),
                           ),
                           Positioned(
                             bottom: 0,
@@ -207,7 +215,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                           ),
                           onPressed: () async {
-                            auth.User? firebaseUser = getCurrAuthUser();
+                            Auth.User? firebaseUser = getCurrAuthUser();
                             User? user = await getCurrUser();
                             if (firebaseUser == null || user == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -219,25 +227,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             }
                             if (editProfileForm.currentState != null && editProfileForm.currentState!.validate()) {
                               editProfileForm.currentState!.save();
-                              ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackbar = ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Saving")));
-                              try {
-                                await firebaseUser.updateEmail(email);
-                                await firebaseUser.updatePassword(password);
-                                String? res;
-                                if (pfpImg != null) res = await uploadPfp(pfpImg);
-                                if (res != null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res)));
-                                } else {
-                                  User updatedUser = User(user.id, username, email, password, basename(pfpImg?.path ?? ""));
-                                  getUserDoc(user.id).update(updatedUser.toJSON());
-                                  widget.settingsSetState(() {});
-                                  snackbar.close();
-                                  Navigator.pop(context);
-                                }
-                              }
-                              on auth.FirebaseException catch (e) {
-                                if (e.message != null) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message!)));
-                              }
+                              await firebaseUser.updateEmail(email);
+                              await firebaseUser.updatePassword(password);
+                              User updatedUser = User(user.id, username, email, password);
+                              getUserDoc(user.id).update(updatedUser.toJSON());
+                              widget.settingsSetState(() {});
+                              Navigator.pop(context);
                             }
                           },
                         ),

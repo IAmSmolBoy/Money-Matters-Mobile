@@ -1,11 +1,46 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as Auth;
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:moneymattersmobile/models/user.dart';
+import 'package:moneymattersmobile/services/firestore.dart';
 
-Auth.FirebaseAuth auth = Auth.FirebaseAuth.instance;
-FirebaseFirestore firestore = FirebaseFirestore.instance;
-Auth.User? currUser = Auth.FirebaseAuth.instance.currentUser;
+firebase_auth.FirebaseAuth auth = firebase_auth.FirebaseAuth.instance;
+firebase_auth.User? currUser = auth.currentUser;
 
+//authentication
+Future<String> login(String email, String password) async {
+  try {
+    await auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    return "Success";
+  } on firebase_auth.FirebaseException catch (e) {
+    return e.message ?? "Error";
+  }
+}
+
+Future<String> register(String username, String email, String password) async {
+  String result = "Error";
+  try {
+    firebase_auth.UserCredential newAuthUser = await auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    await auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    if (newAuthUser.user != null) {
+      await getUserDoc(newAuthUser.user?.uid ?? "").set(User(newAuthUser.user!.uid, username, email, password).toJSON());
+      result = "Success";
+    }
+  } on firebase_auth.FirebaseException catch (e) {
+    result = e.message ?? "Error";
+  }
+  return result;
+}
+
+//retrieving current user info
 Future<User?> getCurrUser() async {
   User? user;
   if ((currUser?.uid ?? "").isNotEmpty) {
@@ -17,4 +52,7 @@ Future<User?> getCurrUser() async {
   return user;
 }
 
-Auth.User? getCurrAuthUser() => currUser;
+firebase_auth.User? getCurrAuthUser() => currUser;
+
+//other miscellaneous functions
+void signOut() => auth.signOut(); 

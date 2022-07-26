@@ -1,20 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:moneymattersmobile/main.dart';
-import 'package:moneymattersmobile/models/transaction.dart' as TransModel;
+import 'package:moneymattersmobile/models/transaction.dart';
 import 'package:moneymattersmobile/models/user.dart';
 import 'package:moneymattersmobile/screenData.dart';
-import 'package:moneymattersmobile/screens/home.dart';
 import 'package:moneymattersmobile/services/auth.dart';
+import 'package:moneymattersmobile/services/firestore.dart';
 import 'package:moneymattersmobile/widgets/addTransactionFields/dropdownFormField.dart';
 import 'package:moneymattersmobile/widgets/addTransactionFields/formFields.dart';
 import 'package:moneymattersmobile/widgets/screenFormat.dart';
 import 'package:moneymattersmobile/widgets/screenHeader.dart';
-import 'package:page_transition/page_transition.dart';
 
 class AddTransactionScreen extends StatefulWidget {
-  TransModel.Transaction? transaction;
+  Transaction? transaction;
   List<DropdownMenuItem<String>> categories = [];
   String category = "";
 
@@ -168,25 +165,18 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             onPressed: () {
               if (form.currentState!.validate()) {
                 form.currentState!.save();
-                if (transactionType == "Expense") amt = -amt!;
-                final transactionDoc = FirebaseFirestore.instance.collection("transactions").doc();
-                TransModel.Transaction formTrans = TransModel.Transaction(
-                  id: transactionDoc.id,
-                  userId: currUser.id,
-                  date: selectedDate!,
-                  category: widget.category,
-                  description: desc!,
-                  amount: amt!
+                setTransaction(
+                  getTransactionDoc(widget.transaction?.id),
+                  Transaction(
+                    id: widget.transaction?.id ?? "",
+                    userId: currUser.id,
+                    date: selectedDate!,
+                    category: widget.category,
+                    description: desc!,
+                    amount: (transactionType == "Expense"? -amt! : amt)!
+                  ),
                 );
-                if (widget.transaction != null) {
-                  final editTransactionDoc = FirebaseFirestore.instance.collection("transactions").doc("${widget.transaction!.id}");
-                  formTrans.id = "${widget.transaction!.id}";
-                  editTransactionDoc.update(formTrans.toJSON());
-                  Navigator.pop(context);
-                }
-                else {
-                  transactionDoc.set(formTrans.toJSON());
-                }
+                if (widget.transaction != null) Navigator.pop(context);
                 setState(() {
                   form.currentState!.reset();
                   dropdown.currentState!.reset();

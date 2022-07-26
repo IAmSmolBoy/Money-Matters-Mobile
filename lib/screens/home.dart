@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
-import 'package:moneymattersmobile/models/transaction.dart' as transModel;
+import 'package:moneymattersmobile/models/transaction.dart';
 import 'package:moneymattersmobile/screenData.dart';
-import 'package:moneymattersmobile/services/firebase.dart';
+import 'package:moneymattersmobile/services/firestore.dart';
 import 'package:moneymattersmobile/widgets/filterDropdown.dart';
 import 'package:moneymattersmobile/widgets/homeListViewTile.dart';
 import 'package:moneymattersmobile/widgets/homeSecTitle.dart';
@@ -36,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
 
-    List<transModel.Transaction> transactionListViewList = [];
+    List<Transaction> transactionListViewList = [];
 
     return FutureBuilder(
       future: readTransactions(),
@@ -51,10 +50,10 @@ class _HomeScreenState extends State<HomeScreen> {
           return ScreenHeader("Reports", Container());
         }
         else {
-          return StreamBuilder<List<transModel.Transaction>>(
+          return StreamBuilder<List<Transaction>>(
             stream: transListSnapshot.data,
             builder: (context, snapshot) {
-              List<transModel.Transaction> filter(filterFunc) =>
+              List<Transaction> filter(filterFunc) =>
                 transactionListViewList = snapshot.data!.any(filterFunc)
                   ? snapshot.data!.where(filterFunc).toList()
                   : [];
@@ -63,10 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   filterCategory == "None" && filterMonth == 0
                     ? snapshot.data!
                     : filterCategory == "None"
-                      ? filter((transModel.Transaction e) => e.date.month == filterMonth)
+                      ? filter((Transaction e) => e.date.month == filterMonth)
                       : filterMonth == 0
-                        ? filter((transModel.Transaction e) => e.category == filterCategory)
-                        : filter((transModel.Transaction e) =>
+                        ? filter((Transaction e) => e.category == filterCategory)
+                        : filter((Transaction e) =>
                           e.date.month == filterMonth &&
                           e.category == filterCategory
                         );
@@ -81,11 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   updateHomeList();
                 });
               }
-              void deleteTransaction (int i) {
-                DocumentReference transaction = FirebaseFirestore.instance
-                  .collection("transactions")
-                  .doc(transactionListViewList[i].id);
-                transaction.delete();
+              void delTrans (int i) {
+                deleteTransaction(transactionListViewList[i].id);
                 transactionListViewList.removeAt(i);
               }
 
@@ -119,10 +115,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           return HomeListTile(
                                             i,
                                             c,
-                                            deleteTransaction,
+                                            delTrans,
                                             DateTime.now().month,
                                             transactionListViewList,
-                                            setState,
                                           );
                                         },
                                         separatorBuilder: (c, i) => const SizedBox(

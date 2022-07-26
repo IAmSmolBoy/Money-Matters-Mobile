@@ -18,13 +18,11 @@ Future uploadPfp(File? photo) async {
   on firebase_storage.FirebaseException catch (e) { return e.message; }
 }
 
-Future<String> getPfpLink() async {
+Future<String?> getPfpLink() async {
   User? user = await getCurrUser();
-  if (user == null) return "User not found";
-  if (user.pfp?.isEmpty ?? true) return "Photo not found";
   try {
-    return await storage.ref("User ${user.id}").getDownloadURL();
+    return await storage.ref("User ${user?.id ?? ''}").getDownloadURL();
   }
-  on firebase_storage.FirebaseException catch (e) { return e.message ?? "Error"; }
-  catch(e) { return "Error"; }
+  on firebase_storage.FirebaseException catch (e) { print(e.message); }
+  catch(e) { print("Error"); }
 }

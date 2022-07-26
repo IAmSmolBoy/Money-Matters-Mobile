@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -17,8 +16,7 @@ class HomeListTile extends StatelessWidget {
   void Function (int i) deleteTransaction;
   int month;
   List<transModel.Transaction> transList;
-  Function homeScreenSetState;
-  HomeListTile(this.i, this.c, this.deleteTransaction, this.month, this.transList, this.homeScreenSetState, {Key? key}) : super(key: key);
+  HomeListTile(this.i, this.c, this.deleteTransaction, this.month, this.transList, {Key? key}) : super(key: key);
 
   //function to find text size
   Size calculateTextSize(
@@ -71,8 +69,7 @@ class HomeListTile extends StatelessWidget {
                 type: PageTransitionType.topToBottom,
                 duration: const Duration(milliseconds: 200),
                 reverseDuration: const Duration(milliseconds: 200),
-              ))
-              .then((value) => homeScreenSetState(() { print(transList.map((e) => e.category)); }));
+              ));
             },
             backgroundColor: const Color(0xFF009fdd),
             foregroundColor: Colors.white,

@@ -5,7 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:moneymattersmobile/models/transaction.dart';
 import 'package:moneymattersmobile/screenData.dart';
-import 'package:moneymattersmobile/services/firebase.dart';
+import 'package:moneymattersmobile/services/firestore.dart';
 import 'package:moneymattersmobile/widgets/homeSecTitle.dart';
 import 'package:moneymattersmobile/widgets/screenHeader.dart';
 

@@ -1,11 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:moneymattersmobile/main.dart';
 import 'package:moneymattersmobile/models/user.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/screens/registerScreen.dart';
-import 'package:moneymattersmobile/services/firebase.dart';
+import 'package:moneymattersmobile/services/auth.dart';
+import 'package:moneymattersmobile/services/firestore.dart';
 import 'package:moneymattersmobile/widgets/registerSignInWidgets/registerSignInPassword.dart';
 import 'package:moneymattersmobile/widgets/registerSignInWidgets/registerSignInTextField.dart';
 import 'package:moneymattersmobile/widgets/registerSignInWidgets/regsterSignInButton.dart';
@@ -136,18 +136,14 @@ class _SignInScreenState extends State<SignInScreen> {
                             RegisterSignInButton(
                               "Sign In",
                               () async {
-                                Auth.FirebaseAuth auth = Auth.FirebaseAuth.instance;
                                 if (form.currentState!.validate()) {
                                   form.currentState!.save();
                                   User? getUserByUsername = userList.any((user) => user.username == widget.username) ?
                                     userList.where((user) => user.username == widget.username).toList()[0] : null;
                                   
                                   if (getUserByUsername != null) {
-                                    try {
-                                      Auth.UserCredential userCredential = await auth.signInWithEmailAndPassword(
-                                        email: getUserByUsername.email,
-                                        password: widget.password!,
-                                      );
+                                    String res = await login(getUserByUsername.email, widget.password!);
+                                    if (res == "Success") {
                                       Navigator.push(
                                         context,
                                         PageTransition(
@@ -156,11 +152,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                             type: PageTransitionType.topToBottomJoined
                                         ),
                                       );
-                                    } on Auth.FirebaseAuthException catch (e) {
+                                    }
+                                    else  {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                             content: Text(
-                                            e.message ?? "",
+                                            res,
                                             style: const TextStyle(fontSize: 16),
                                           ),
                                         )

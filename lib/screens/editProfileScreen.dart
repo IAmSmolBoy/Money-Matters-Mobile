@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:moneymattersmobile/models/user.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/services/auth.dart';
-import 'package:moneymattersmobile/services/firebase.dart';
+import 'package:moneymattersmobile/services/firestore.dart';
 import 'package:moneymattersmobile/services/storage.dart';
 import 'package:moneymattersmobile/widgets/editProfileWidgets/editProfileTextField.dart';
 import 'package:moneymattersmobile/widgets/screenFormat.dart';
@@ -254,7 +254,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                               ),
                               onPressed: () async {
-                                auth.User? firebaseUser = getCurrAuthUser();
+                                firebase_auth.User? firebaseUser = getCurrAuthUser();
                                 User? user = await getCurrUser();
                                 if (firebaseUser == null || user == null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -282,7 +282,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       Navigator.pop(context);
                                     }
                                   }
-                                  on auth.FirebaseException catch (e) {
+                                  on firebase_auth.FirebaseException catch (e) {
                                     if (e.message != null) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message!)));
                                   }
                                 }

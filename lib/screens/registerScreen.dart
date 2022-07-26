@@ -125,6 +125,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 email: widget.email!,
                                 password: widget.password!,
                               );
+                              await auth.signInWithEmailAndPassword(
+                                email: widget.email!,
+                                password: widget.password!,
+                              );
                               DocumentReference<Map<String, dynamic>> userDoc = FirebaseFirestore.instance.collection("users").doc(newAuthUser.user != null ? newAuthUser.user!.uid : null);
                               User newUser = User(userDoc.id, widget.username!, widget.email!, widget.password!);
                               Map<String, dynamic> userJSON = newUser.toJSON();

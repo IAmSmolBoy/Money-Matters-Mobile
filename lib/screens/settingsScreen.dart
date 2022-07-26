@@ -33,7 +33,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           currUser = snapshot.data;
         }
         return ScreenFormat(
-          Form(
+          snapshot.connectionState != ConnectionState.done ?
+            const Center(child: CircularProgressIndicator())
+          : Form(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ListView(

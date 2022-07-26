@@ -36,53 +36,57 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
 
-    //category filter dropdown on changed function
-    void filterByCategory(int newCategoryIndex) {
-      setState(() {
-        filterCategory = homeFilterCatList[newCategoryIndex];
-      });
-    }
     List<transModel.Transaction> transactionListViewList = [];
 
     return FutureBuilder(
       future: readTransactions(),
+<<<<<<< Updated upstream
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("${snapshot.error}"))
+=======
+      builder: (BuildContext context, AsyncSnapshot<dynamic> transListSnapshot) {
+        if (transListSnapshot.hasError) {
+            Future.delayed(Duration.zero, () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("${transListSnapshot.error}"))
+              );
+            }
+>>>>>>> Stashed changes
           );
           return ScreenHeader("Reports", Container());
         }
         else {
           return StreamBuilder<List<transModel.Transaction>>(
-            stream: snapshot.data,
+            stream: transListSnapshot.data,
             builder: (context, snapshot) {
               List<transModel.Transaction> filter(filterFunc) =>
-                  transactionListViewList = snapshot.data!.any(filterFunc)
-                      ? snapshot.data!.where(filterFunc).toList()
-                      : [];
+                transactionListViewList = snapshot.data!.any(filterFunc)
+                  ? snapshot.data!.where(filterFunc).toList()
+                  : [];
               void updateHomeList() {
                 transactionListViewList =
-                    filterCategory == "None" && filterMonth == 0
-                        ? snapshot.data!
-                        : filterCategory == "None"
-                            ? filter((transModel.Transaction e) => e.date.month == filterMonth)
-                            : filterMonth == 0
-                                ? filter((transModel.Transaction e) => e.category == filterCategory)
-                                : filter((transModel.Transaction e) =>
-                                    e.date.month == filterMonth &&
-                                    e.category == filterCategory);
-                  // print(transactionListViewList.map((e) => e.date.toString()));
+                  filterCategory == "None" && filterMonth == 0
+                    ? snapshot.data!
+                    : filterCategory == "None"
+                      ? filter((transModel.Transaction e) => e.date.month == filterMonth)
+                      : filterMonth == 0
+                        ? filter((transModel.Transaction e) => e.category == filterCategory)
+                        : filter((transModel.Transaction e) =>
+                          e.date.month == filterMonth &&
+                          e.category == filterCategory
+                        );
               }
               void changeMonth(int newMonth) => setState(() {
                 filterMonth = newMonth;
                 updateHomeList();
               });
-              if (snapshot.hasData) {
-                transactionListViewList = snapshot.data!;
-                updateHomeList();
-              } else if (snapshot.hasError) {
-                print(snapshot.error);
+              void filterByCategory(int newCategoryIndex) {
+                setState(() {
+                  filterCategory = homeFilterCatList[newCategoryIndex];
+                  updateHomeList();
+                });
               }
               void deleteTransaction (int i) {
                 DocumentReference transaction = FirebaseFirestore.instance
@@ -91,18 +95,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 transaction.delete();
                 transactionListViewList.removeAt(i);
               }
+
+              if (snapshot.hasData) {
+                transactionListViewList = snapshot.data!;
+                updateHomeList();
+              } else if (snapshot.hasError) {
+                print(snapshot.error);
+              }
       
-              return ScreenHeader(
+              return transListSnapshot.connectionState != ConnectionState.done || snapshot.connectionState != ConnectionState.active ?
+                const Center(child: CircularProgressIndicator())
+              : ScreenHeader(
                 "Transactions",
                 ListView.separated(
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, i) {
-                      // print("a $transactionListViewList");
                       return [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              HomeSectionTitle("This Month"),
+                              HomeSectionTitle(filterMonth != 0 ? monthList[filterMonth] : filterCategory != "None" ? filterCategory : "All Transactions"),
                               transactionListViewList.isNotEmpty
                                   ? ConstrainedBox(
                                       constraints: const BoxConstraints(
@@ -111,7 +123,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: ListView.separated(
                                         shrinkWrap: true,
                                         itemBuilder: (c, i) {
-                                          // print(transactionListViewList.map((e) => e.id,));
                                           return HomeListTile(
                                             i,
                                             c,
@@ -134,10 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               HomeSectionTitle("Filter"),
-                              FilterDropdown("Month: ", monthList, changeMonth,
-                                  DateTime.now().month),
-                              FilterDropdown("Category: ", homeFilterCatList,
-                                  filterByCategory),
+                              FilterDropdown("Month: ", monthList, changeMonth, filterMonth),
+                              FilterDropdown("Category: ", homeFilterCatList, filterByCategory,  homeFilterCatList.indexOf(filterCategory)),
                             ],
                           ),
                         ][i];

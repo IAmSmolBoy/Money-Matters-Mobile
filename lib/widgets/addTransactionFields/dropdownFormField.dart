@@ -22,13 +22,11 @@ class AddTransactionDropdown extends StatelessWidget {
       dropdownColor: const Color(0xFF212529),
       decoration: InputDecoration(
           border: const OutlineInputBorder(),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: textColor)
-          ),
-          labelStyle: TextStyle(color: textColor,),
+          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).primaryColor)),
+          labelStyle: TextStyle(color: Theme.of(context).primaryColor,),
           labelText: label
       ),
-      style: TextStyle(fontSize: 20, color: textColor,),
+      style: TextStyle(fontSize: 20, color: Theme.of(context).primaryColor,),
       items: dropdownList,
       onChanged: onChangedFunc ?? (val) {},
       validator: (val) => validateInput(val, label),

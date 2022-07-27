@@ -11,7 +11,8 @@ Map<String, List<String>> allCategories = {
   "Expense": ["School", "F&B", "Transport", "Entertainment", "Investments(Expense)", "Medical", "Other(Expense)"],
 };
 
-Color textColor = Colors.white;
+//themes
+ThemeMode theme = ThemeMode.dark;
 
 //for sign in and register screens
 const bgColour = Color(0xff191720);

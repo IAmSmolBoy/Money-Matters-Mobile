@@ -24,21 +24,15 @@ class _EditProfileTextFieldState extends State<EditProfileTextField> {
       child: TextFormField(
         controller: widget.controller,
         obscureText: widget.password && !showPassword,
-        style: TextStyle(color: textColor),
+        // style: TextStyle(color: textColor),
         decoration: InputDecoration(
           labelText: widget.labelText,
-          labelStyle: TextStyle(
-            color: textColor,
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: textColor,
-            ),
-          ),
+          // labelStyle: TextStyle(color: textColor,),
+          // enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: textColor,),),
           hintStyle: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: textColor,
+            // color: textColor,
           ),
           suffixIcon: widget.password ?
           IconButton(

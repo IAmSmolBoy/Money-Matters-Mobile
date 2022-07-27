@@ -22,6 +22,13 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   GlobalKey<FormState> form = GlobalKey<FormState>();
+  List<String> usernameList = [];
+
+  @override
+  initState() {
+    readUsers().then((value) => setState(() { usernameList = value.map((e) => e.username,).toList(); }));
+    super.initState();
+  }
 
   bool passwordObscurity = true;
 
@@ -42,22 +49,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
-      body: StreamBuilder<List<User>>(
-        stream: readUsers(),
-        builder: (context, snapshot) {
-          List<String> usernameList = [];
-          if (snapshot.hasError) {
-            Future.delayed(
-              const Duration(microseconds: 0),
-              () => ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("${snapshot.error}"))
-              )
-            );
-          }
-          usernameList = snapshot.data?.map((user) => user.username).toList() ?? [];
-          return snapshot.connectionState != ConnectionState.active ?
-          const CircularProgressIndicator() :
-          GestureDetector(
+      body: usernameList.isEmpty ?
+      const Center(child: CircularProgressIndicator()) :
+      GestureDetector(
             onTap: () { FocusScope.of(context).unfocus(); },
             child: SafeArea(
               child: CustomScrollView(
@@ -168,9 +162,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ],
               ),
             ),
-          );
-        }
-      ),
+          )
     );
   }
 }

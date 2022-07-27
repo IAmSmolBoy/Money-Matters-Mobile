@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:moneymattersmobile/models/transaction.dart' as transModel;
 import 'package:moneymattersmobile/screens/addTasnactionScreen.dart';
 import 'package:moneymattersmobile/screens/viewTransactionScreen.dart';
-import 'package:moneymattersmobile/widgets/homeListText.dart';
+import 'package:moneymattersmobile/widgets/homeWidgets/homeListText.dart';
 import 'package:page_transition/page_transition.dart';
 
 class HomeListTile extends StatelessWidget {

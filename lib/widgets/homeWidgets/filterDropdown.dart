@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moneymattersmobile/screenData.dart';
 
 class FilterDropdown extends StatelessWidget {
 
@@ -15,17 +14,17 @@ class FilterDropdown extends StatelessWidget {
       value: initialValue != null ? itemList[initialValue!] : null,
       dropdownColor: Theme.of(context).scaffoldBackgroundColor,
       decoration: InputDecoration(
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: textColor)),
+        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).primaryColor)),
         label: Text(title,
           style: TextStyle(
               fontSize: 20,
-              color: textColor,
+              color: Theme.of(context).primaryColor,
           ),
         ),
       ),
       style: TextStyle(
         fontSize: 20,
-        color: textColor,
+        color: Theme.of(context).primaryColor,
       ),
       items: itemList.map((e) => DropdownMenuItem<String>(child: Text(e), value: e)).toList(),
       onChanged: (e) { if (changeVal != null) changeVal!(itemList.indexOf(e!)); }

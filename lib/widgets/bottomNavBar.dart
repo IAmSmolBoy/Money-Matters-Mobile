@@ -37,8 +37,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return ConvexAppBar(
       items: pageData.map<TabItem>((e) => TabItem( icon: e["icon"], title: e["title"] )).toList(),
       controller: widget.pc,
-      activeColor: textColor,
-      color: textColor,
+      // activeColor: textColor,
+      // color: textColor,
       backgroundColor: const Color(0xFF212529),
     );
   }

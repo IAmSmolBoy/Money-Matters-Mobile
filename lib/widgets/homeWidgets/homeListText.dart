@@ -18,7 +18,7 @@ class HomeListText extends StatelessWidget {
         minFontSize: fontSize,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(color: textColor,),
+        style: TextStyle(color: Theme.of(context).primaryColor,),
       ),
     );
   }

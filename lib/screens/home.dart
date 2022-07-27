@@ -2,9 +2,9 @@ import "package:flutter/material.dart";
 import 'package:moneymattersmobile/models/transaction.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/services/firestore.dart';
-import 'package:moneymattersmobile/widgets/filterDropdown.dart';
-import 'package:moneymattersmobile/widgets/homeListViewTile.dart';
-import 'package:moneymattersmobile/widgets/homeSecTitle.dart';
+import 'package:moneymattersmobile/widgets/homeWidgets/filterDropdown.dart';
+import 'package:moneymattersmobile/widgets/homeWidgets/homeListViewTile.dart';
+import 'package:moneymattersmobile/widgets/homeWidgets/homeSecTitle.dart';
 import 'package:moneymattersmobile/widgets/screenHeader.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,7 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
       allCategories.values.expand((e) => e).toList();
 
   _HomeScreenState() {
-    //home transaction list
     homeFilterCatList.insert(0, "None");
   }
 
@@ -105,27 +104,27 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               HomeSectionTitle(filterMonth != 0 ? monthList[filterMonth] : filterCategory != "None" ? filterCategory : "All Transactions"),
                               transactionListViewList.isNotEmpty
-                                  ? ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                        maxHeight: 167,
+                                ? ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxHeight: 167,
+                                    ),
+                                    child: ListView.separated(
+                                      shrinkWrap: true,
+                                      itemBuilder: (c, i) {
+                                        return HomeListTile(
+                                          i,
+                                          c,
+                                          delTrans,
+                                          DateTime.now().month,
+                                          transactionListViewList,
+                                        );
+                                      },
+                                      separatorBuilder: (c, i) => const SizedBox(
+                                        height: 1,
                                       ),
-                                      child: ListView.separated(
-                                        shrinkWrap: true,
-                                        itemBuilder: (c, i) {
-                                          return HomeListTile(
-                                            i,
-                                            c,
-                                            delTrans,
-                                            DateTime.now().month,
-                                            transactionListViewList,
-                                          );
-                                        },
-                                        separatorBuilder: (c, i) => const SizedBox(
-                                          height: 1,
-                                        ),
-                                        itemCount: transactionListViewList.length,
-                                      ))
-                                  : Container()
+                                      itemCount: transactionListViewList.length,
+                                    ))
+                                : Container()
                             ],
                           ),
                           // SortBySection(changeSortBy, sortBy),

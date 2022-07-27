@@ -22,16 +22,14 @@ class AddTransactionFormField extends StatelessWidget {
 
     return TextFormField(
       initialValue: textFieldController == null ? initialVal : null,
-      style: TextStyle(color: textColor),
+      style: TextStyle(color: Theme.of(context).primaryColor),
       controller: textFieldController,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         contentPadding: textFieldController != null ? const EdgeInsets.fromLTRB(15, 5, 0, 5) : null,
         border: const OutlineInputBorder(),
-        enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: textColor)
-        ),
-        labelStyle: TextStyle(color: textColor,),
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).primaryColor)),
+        labelStyle: TextStyle(color: Theme.of(context).primaryColor,),
         labelText: label,
         suffix: chooseDateFunc != null ? TextButton(
           onPressed: chooseDateFunc,

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_core/firebase_core.dart';
 import "package:flutter/material.dart";
 import 'package:moneymattersmobile/models/user.dart';
+import 'package:moneymattersmobile/providers/themeProvider.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/screens/addTasnactionScreen.dart';
 import 'package:moneymattersmobile/screens/home.dart';
@@ -10,6 +11,7 @@ import 'package:moneymattersmobile/screens/reportsScreen.dart';
 import 'package:moneymattersmobile/screens/signInScreen.dart';
 import 'package:moneymattersmobile/services/auth.dart';
 import 'package:moneymattersmobile/widgets/screenFormat.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main () async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,11 +24,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xff191720),
-      ),
-      home: Auth.FirebaseAuth.instance.currentUser == null ? SignInScreen() : MainScreen(),
+    return ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      builder: (context, _) {
+        
+        return MaterialApp(
+          themeMode: Provider.of<ThemeProvider>(context).theme,
+          theme: ThemeData(
+            scaffoldBackgroundColor: const Color(0xffF8F9FA),
+            colorScheme: const ColorScheme.light(primary: Color(0xff191720),),
+            primaryColor: const Color(0xffF8F9FA),
+          ),
+          darkTheme: ThemeData(
+            scaffoldBackgroundColor: const Color(0xff191720),
+            colorScheme: const ColorScheme.dark(primary: Color(0xffF8F9FA),),
+            primaryColor: const Color(0xffF8F9FA),
+          ),
+          home: Auth.FirebaseAuth.instance.currentUser == null ? SignInScreen() : MainScreen(),
+        );
+      }
     );
   }
 }

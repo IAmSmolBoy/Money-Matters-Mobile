@@ -48,6 +48,8 @@ dependencies:
   email_validator: ^2.0.1
   image_picker: ^0.8.5+3
   path: ^1.7.0
+  flutter_launcher_icons: ^0.9.3
+  provider: ^6.0.3
   flutter_native_splash: ^2.1.6
 
 
@@ -71,6 +73,12 @@ dev_dependencies:
 flutter_native_splash:
   color: "#191720"
   image: images/Splash Screen Logo.png
+
+flutter_icons:
+  android: true
+  image_path: images\App Icon.png
+  adaptive_icon_background: "#000000"
+
 
 flutter:
 

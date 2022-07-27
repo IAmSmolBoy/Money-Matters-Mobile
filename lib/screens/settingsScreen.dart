@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:moneymattersmobile/models/user.dart';
+import 'package:moneymattersmobile/providers/themeProvider.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/screens/editProfileScreen.dart';
 import 'package:moneymattersmobile/screens/registerScreen.dart';
@@ -10,6 +11,7 @@ import 'package:moneymattersmobile/services/firestore.dart';
 import 'package:moneymattersmobile/services/storage.dart';
 import 'package:moneymattersmobile/widgets/screenFormat.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
 
@@ -19,223 +21,207 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final form = GlobalKey<FormState>();
+  User? currUser;
+  String userPfp = "";
 
-  bool darkMode = true;
+  @override
+  void initState() {
+    getCurrUser().then((value) => setState(() {currUser = value;}));
+    getPfpLink().then((value) => setState(() {userPfp = value ?? "Nothing";}));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<User?>(
-      future: getCurrUser(),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> userSnapshot) {
-        User? currUser; 
-        if (userSnapshot.hasError) {
-          print(userSnapshot.error);
-        }
-        else if (userSnapshot.hasData) {
-          currUser = userSnapshot.data;
-        }
-        return FutureBuilder<String?>(
-          future: getPfpLink(),
-          builder: (context, snapshot) {
-            String? userPfp;
-            if (snapshot.hasError) {
-              print(snapshot.error);
-            }
-            else if (snapshot.hasData) {
-              userPfp = snapshot.data;
-            }
-            return ScreenFormat(
-              userSnapshot.connectionState != ConnectionState.done || snapshot.connectionState != ConnectionState.done ?
-                const Center(child: CircularProgressIndicator())
-              : Form(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ListView(
-                    children: [
+    bool darkMode = Provider.of<ThemeProvider>(context).theme == ThemeMode.dark;
+    return ScreenFormat(
+      currUser == null || userPfp.isEmpty ?
+        const Center(child: CircularProgressIndicator())
+      : Form(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: ListView(
+            children: [
+              const Text(
+                "Settings",
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500,
+                  // color: textColor,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)
+                ),
+                margin: EdgeInsets.zero,
+                color: const Color(0xFF495057),
+                child: ListTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        childCurrent: widget,
+                        child: EditProfileScreen(settingsSetState: setState,),
+                        type: PageTransitionType.topToBottomJoined,
+                      ),
+                    );
+                  },
+                  title: Text(currUser?.username ?? "Guest",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).primaryColor,
+                    )),
+                  leading: currUser != null && (currUser?.pfp ?? "").isNotEmpty ?
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(25),
+                      child: Image.network(
+                        userPfp,
+                        width: 25,
+                        height: 25,
+                        fit: BoxFit.cover,
+                      ),
+                    ) :
+                    Icon(
+                      Icons.account_circle_outlined,
+                      size: 25,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  trailing: Icon(
+                    Icons.edit,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                elevation: 8.0,
+              ),
+              const SizedBox(height: 40),
+              Row(
+                children: const [
+                  Icon(
+                    Icons.settings,
+                    color: Colors.green,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    "General",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(
+                height: 15,
+                thickness: 2,
+                color: Color(0xFFADB5BD),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: const [
+                      Icon(
+                        Icons.nightlight,
+                        color: Colors.green,
+                      ),
                       Text(
-                        "Settings",
+                        "Dark mode",
                         style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                          color: textColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            // color: textColor,
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)
-                        ),
-                        margin: EdgeInsets.zero,
-                        color: const Color(0xFF495057),
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                childCurrent: widget,
-                                child: EditProfileScreen(settingsSetState: setState,),
-                                type: PageTransitionType.topToBottomJoined,
-                              ),
-                            );
-                          },
-                          title: Text(currUser?.username ?? "Guest",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: textColor,
-                            )),
-                          leading: currUser != null && (currUser.pfp ?? "").isNotEmpty ?
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(25),
-                              child: Image.network(
-                                userPfp ?? "",
-                                width: 25,
-                                height: 25,
-                                fit: BoxFit.cover,
-                              ),
-                            ) :
-                            Icon(
-                              Icons.account_circle_outlined,
-                              size: 25,
-                              color: textColor,
-                            ),
-                          trailing: Icon(
-                            Icons.edit,
-                            color: textColor,
-                          ),
-                        ),
-                        elevation: 8.0,
-                      ),
-                      const SizedBox(height: 40),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.settings,
-                            color: Colors.green,
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            "General",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: textColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(
-                        height: 15,
-                        thickness: 2,
-                        color: Color(0xFFADB5BD),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.nightlight,
-                                color: Colors.green,
-                              ),
-                              Text(
-                                "Dark mode",
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: textColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Transform.scale(
-                            scale: 0.7,
-                            child: CupertinoSwitch(
-                              value: darkMode,
-                              onChanged: (bool val) {
-                                setState(() {
-                                  darkMode = val;
-                                });
-                              }
-                            )
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 50,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 40),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                              side: const BorderSide(color: Colors.red,),
-                            ),
-                            child: const Text(
-                              "Delete",
-                              style: TextStyle(
-                                fontSize: 16,
-                                letterSpacing: 2.2,
-                                color: Colors.red,
-                              ),
-                            ),
-                            onPressed: () {
-                              signOut();
-                              deleteUser(currUser?.id ?? "");
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                PageTransition(
-                                  childCurrent: widget,
-                                  child: RegisterScreen(),
-                                  type: PageTransitionType.topToBottomJoined
-                                ),
-                                (route) => false
-                              );
-                            }
-                          ),
-                          OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 40),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                              side: BorderSide(color: textColor,),
-                            ),
-                            onPressed: () {
-                              signOut();
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                PageTransition(
-                                  childCurrent: widget,
-                                  child: SignInScreen(),
-                                  type: PageTransitionType.bottomToTopJoined,
-                                ),
-                                (route) => false,
-                              );
-                            },
-                            child: Text(
-                              "Sign Out",
-                              style: TextStyle(
-                                fontSize: 16,
-                                letterSpacing: 2.2,
-                                color: textColor,
-                              ),
-                            ),
-                          ),
-                        ]
                       ),
                     ],
                   ),
-                ),
+                  Transform.scale(
+                    scale: 0.7,
+                    child: CupertinoSwitch(
+                      value: darkMode,
+                      onChanged: (bool val) {
+                        setState(() {
+                          darkMode = val;
+                          Provider.of<ThemeProvider>(context, listen: false).toggleTheme(darkMode);
+                        });
+                      }
+                    )
+                  )
+                ],
               ),
-              settings: false,
-              logo: false,
-            );
-          }
-        );
-      },
+              const SizedBox(height: 50,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                      side: const BorderSide(color: Colors.red,),
+                    ),
+                    child: const Text(
+                      "Delete",
+                      style: TextStyle(
+                        fontSize: 16,
+                        letterSpacing: 2.2,
+                        color: Colors.red,
+                      ),
+                    ),
+                    onPressed: () {
+                      signOut();
+                      deleteUser(currUser?.id ?? "");
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        PageTransition(
+                          childCurrent: widget,
+                          child: RegisterScreen(),
+                          type: PageTransitionType.topToBottomJoined
+                        ),
+                        (route) => false
+                      );
+                    }
+                  ),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                      // side: BorderSide(color: textColor,),
+                    ),
+                    onPressed: () {
+                      signOut();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        PageTransition(
+                          childCurrent: widget,
+                          child: SignInScreen(),
+                          type: PageTransitionType.bottomToTopJoined,
+                        ),
+                        (route) => false,
+                      );
+                    },
+                    child: Text(
+                      "Sign Out",
+                      style: TextStyle(
+                        fontSize: 16,
+                        letterSpacing: 2.2,
+                        // color: textColor,
+                      ),
+                    ),
+                  ),
+                ]
+              ),
+            ],
+          ),
+        ),
+      ),
+      settings: false,
+      logo: false,
     );
   }
 }

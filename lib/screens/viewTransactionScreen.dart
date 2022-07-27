@@ -31,7 +31,7 @@ class ViewTransactionScreen extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               title: AutoSizeText(transactionInfo[j],
                 minFontSize: 25,
-                style: TextStyle(color: textColor),
+                // style: TextStyle(color: textColor),
               ),
             ),
           itemCount: transactionInfo.length

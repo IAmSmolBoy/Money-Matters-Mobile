@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:moneymattersmobile/models/transaction.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/services/firestore.dart';
-import 'package:moneymattersmobile/widgets/homeSecTitle.dart';
+import 'package:moneymattersmobile/widgets/homeWidgets/homeSecTitle.dart';
 import 'package:moneymattersmobile/widgets/screenHeader.dart';
 
 class ReportsScreen extends StatefulWidget {
@@ -109,62 +109,69 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 return ScreenHeader("Reports",
                     Column(
                       children: [
-                        Column(
-                          children: [
-                            HomeSectionTitle("Net Income for ${monthList[DateTime.now().month]}"),
-                            const SizedBox(height: 5),
-                            SizedBox(
-                              width: 400,
-                              height: 200,
-                              child: snapshot.connectionState == ConnectionState.active ? 
-                              BarChart(
-                                  BarChartData(
-                                    barGroups: barGroups,
-                                    gridData: FlGridData(
-                                      checkToShowHorizontalLine: (value) => value % 5 == 0,
-                                      getDrawingHorizontalLine: (value) =>
-                                        FlLine(
-                                          color: value == 0 ? const Color(0xff363753) : const Color(0xff2a2747),
-                                          strokeWidth: value == 0 ? 3.0 : 0.8,
-                                        )
-                                    ),
-                                  barTouchData: BarTouchData(
-                                    touchTooltipData: BarTouchTooltipData(
-                                      tooltipBgColor: Colors.transparent,
-                                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                                        return BarTooltipItem(
-                                          '(${group.x}, ${rod.toY})',
-                                          TextStyle(
-                                            color: rod.toY > 0 ? const Color(0xff53fdd7) : const Color(0xffff5182),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                    titlesData: FlTitlesData(
-                                      show: true,
-                                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                      leftTitles: AxisTitles(
-                                        sideTitles: SideTitles(
-                                          reservedSize: 30,
-                                          showTitles: true,
-                                          getTitlesWidget: (i, meta) => AutoSizeText(leftTitleList[i.toInt() - minVal], maxLines: 1, style: TextStyle(color: textColor),)
-                                        )
-                                      ),
-                                      bottomTitles: AxisTitles(
-                                        sideTitles: SideTitles(
-                                          showTitles: true,
-                                          getTitlesWidget: (i, meta) => Text(bottomTitleList[i.toInt() - 1], style: TextStyle(color: textColor),),
-                                        )
-                                      )
-                                    ),
+                        HomeSectionTitle("Net Income for ${monthList[DateTime.now().month]}"),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: 400,
+                          height: 200,
+                          child: snapshot.connectionState == ConnectionState.active ? 
+                          BarChart(
+                            BarChartData(
+                              barGroups: barGroups,
+                              gridData: FlGridData(
+                                checkToShowHorizontalLine: (value) => value % 5 == 0,
+                                getDrawingHorizontalLine: (value) =>
+                                  FlLine(
+                                    color: value == 0 ? const Color(0xff363753) : const Color(0xff2a2747),
+                                    strokeWidth: value == 0 ? 3.0 : 0.8,
                                   )
-                              ) : Container(),
-                            ),
-                          ],
+                              ),
+                              barTouchData: BarTouchData(
+                                touchTooltipData: BarTouchTooltipData(
+                                  tooltipBgColor: Colors.transparent,
+                                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                                    return BarTooltipItem(
+                                      '(${group.x}, ${rod.toY})',
+                                      TextStyle(
+                                        color: rod.toY > 0 ? const Color(0xff53fdd7) : const Color(0xffff5182),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    );
+                                  }),
+                                ),
+                                titlesData: FlTitlesData(
+                                  show: true,
+                                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                  leftTitles: AxisTitles(
+                                    sideTitles: SideTitles(
+                                      reservedSize: 30,
+                                      showTitles: true,
+                                      getTitlesWidget: (i, meta) => AutoSizeText(
+                                        leftTitleList[i.toInt() - minVal], 
+                                        maxLines: 1, 
+                                        style: TextStyle(color: Theme.of(context).primaryColor),
+                                      )
+                                    )
+                                  ),
+                                  bottomTitles: AxisTitles(
+                                    sideTitles: SideTitles(
+                                      showTitles: true,
+                                      getTitlesWidget: (i, meta) => Text(bottomTitleList[i.toInt() - 1], 
+                                        style: TextStyle(color: Theme.of(context).primaryColor),
+                                      ),
+                                    )
+                                  )
+                                ),
+                            )
+                          ) : Container(),
                         ),
+                        Text("Day in ${monthList[DateTime.now().month]}", style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold
+                        ),)
                       ],
                     )
                 );

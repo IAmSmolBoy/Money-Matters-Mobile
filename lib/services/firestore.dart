@@ -18,12 +18,10 @@ List<T> filter<T>(dynamic list, bool Function(T item) filterFunc) =>
 
 
 //firebase user CRUD
-Stream<List<User>> readUsers() => userCollection
-.snapshots()
-.map((snapshot) => snapshot.docs
+Future<List<User>> readUsers() async => (await userCollection
+.snapshots().first).docs
   .map((doc) => User.fromJSON(doc.data())!)
-  .toList()
-);
+  .toList();
 
 void deleteUser(String id) => userCollection.doc(id).delete();
 

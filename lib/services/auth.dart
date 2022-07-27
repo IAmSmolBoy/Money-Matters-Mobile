@@ -4,7 +4,6 @@ import 'package:moneymattersmobile/models/user.dart';
 import 'package:moneymattersmobile/services/firestore.dart';
 
 firebase_auth.FirebaseAuth auth = firebase_auth.FirebaseAuth.instance;
-firebase_auth.User? currUser = auth.currentUser;
 
 //authentication
 Future<String> login(String email, String password) async {
@@ -42,6 +41,7 @@ Future<String> register(String username, String email, String password) async {
 
 //retrieving current user info
 Future<User?> getCurrUser() async {
+  firebase_auth.User? currUser = auth.currentUser;
   User? user;
   if ((currUser?.uid ?? "").isNotEmpty) {
     DocumentSnapshot doc = await firestore.collection("users")
@@ -52,7 +52,7 @@ Future<User?> getCurrUser() async {
   return user;
 }
 
-firebase_auth.User? getCurrAuthUser() => currUser;
+firebase_auth.User? getCurrAuthUser() => auth.currentUser;
 
 //other miscellaneous functions
-void signOut() => auth.signOut(); 
+void signOut() => auth.signOut();

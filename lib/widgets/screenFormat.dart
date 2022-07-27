@@ -25,18 +25,18 @@ class ScreenFormat extends StatelessWidget {
               children: [
                 logo ?
                 RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     style: TextStyle(fontSize: 25.0,),
                     children: <TextSpan>[
-                      TextSpan(text: 'Money', style: TextStyle(color: Colors.green)),
-                      TextSpan(text: 'Matters'),
+                      const TextSpan(text: 'Money', style: TextStyle(color: Colors.green)),
+                      TextSpan(text: 'Matters', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
                     ],
                   ),
                 ) :
                 IconButton(
                   alignment: Alignment.centerLeft,
                   padding: EdgeInsets.zero,
-                  color: textColor,
+                  // color: textColor,
                   onPressed: () { Navigator.pop(context); },
                   icon: const Icon(Icons.arrow_back),
                 ),
@@ -52,7 +52,10 @@ class ScreenFormat extends StatelessWidget {
                       reverseDuration: const Duration(milliseconds: 200),
                     ));
                   },
-                  icon: Icon(Icons.settings, color: textColor,)
+                  icon: Icon(
+                    Icons.settings,
+                    // color: textColor,
+                  )
                 ) : const SizedBox()
               ],
             ),

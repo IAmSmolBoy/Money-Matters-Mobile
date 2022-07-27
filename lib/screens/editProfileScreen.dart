@@ -107,7 +107,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         Text(
                           "Edit Profile",
                           style: TextStyle(
-                              color: textColor,
+                              // color: textColor,
                               fontSize: 25,
                               fontWeight: FontWeight.w500),
                         ),
@@ -167,7 +167,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     icon: Icon(
                                       Icons.account_circle_outlined,
                                       size: 130,
-                                      color: textColor,
+                                      // color: textColor,
                                     ),
                                     onPressed: selectImage,
                                   ),
@@ -226,15 +226,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       const EdgeInsets.symmetric(horizontal: 50),
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20)),
-                                  side: BorderSide(color: textColor),
+                                  // side: BorderSide(color: textColor),
                                 ),
                                 onPressed: () => Navigator.pop(context),
-                                child: Text(
+                                child: const Text(
                                   "Cancel",
                                   style: TextStyle(
                                     fontSize: 14,
                                     letterSpacing: 2.2,
-                                    color: textColor,
+                                    // color: textColor,
                                   ),
                                 )),
                             ElevatedButton(
@@ -275,7 +275,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     if (res != null) {
                                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res)));
                                     } else {
-                                      User updatedUser = User(user.id, username, email, password, basename(pfpImg?.path ?? ""));
+                                      User updatedUser = User(user.id, username, email, password, pfpImg != null ? basename(pfpImg?.path ?? "") : currUser?.pfp ?? "");
                                       getUserDoc(user.id).update(updatedUser.toJSON());
                                       widget.settingsSetState(() {});
                                       snackbar.close();

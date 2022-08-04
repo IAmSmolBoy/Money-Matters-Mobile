@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:moneymattersmobile/models/user.dart';
 import 'package:moneymattersmobile/providers/themeProvider.dart';
-import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/screens/editProfileScreen.dart';
 import 'package:moneymattersmobile/screens/registerScreen.dart';
 import 'package:moneymattersmobile/screens/signInScreen.dart';
@@ -24,10 +23,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   User? currUser;
   String userPfp = "";
 
+  void getUserInfo() {
+    getCurrUser().then((value) => setState(() {currUser = value;}));
+    getPfpLink().then((value) => setState(() {userPfp = value ?? "";}));
+  }
+
   @override
   void initState() {
-    getCurrUser().then((value) => setState(() {currUser = value;}));
-    getPfpLink().then((value) => setState(() {userPfp = value ?? "Nothing";}));
+    getUserInfo();
     super.initState();
   }
 
@@ -63,7 +66,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       context,
                       PageTransition(
                         childCurrent: widget,
-                        child: EditProfileScreen(settingsSetState: setState,),
+                        child: EditProfileScreen(getUserInfo: getUserInfo),
                         type: PageTransitionType.topToBottomJoined,
                       ),
                     );

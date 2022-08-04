@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ Map<String, List<String>> allCategories = {
   "Earn": ["Salary", "Investments(Earnt)", "Other(Earnt)"],
   "Expense": ["School", "F&B", "Transport", "Entertainment", "Investments(Expense)", "Medical", "Other(Expense)"],
 };
+int filterMonth = DateTime.now().month;
+String filterCategory = "None";
 
 //themes
 ThemeMode theme = ThemeMode.dark;

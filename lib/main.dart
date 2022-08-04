@@ -1,12 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_core/firebase_core.dart';
 import "package:flutter/material.dart";
-import 'package:moneymattersmobile/models/user.dart';
 import 'package:moneymattersmobile/providers/themeProvider.dart';
-import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/screens/addTasnactionScreen.dart';
 import 'package:moneymattersmobile/screens/home.dart';
-import 'package:moneymattersmobile/screens/registerScreen.dart';
 import 'package:moneymattersmobile/screens/reportsScreen.dart';
 import 'package:moneymattersmobile/screens/signInScreen.dart';
 import 'package:moneymattersmobile/services/auth.dart';
@@ -27,7 +24,6 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
       builder: (context, _) {
-        
         return MaterialApp(
           themeMode: Provider.of<ThemeProvider>(context).theme,
           theme: ThemeData(

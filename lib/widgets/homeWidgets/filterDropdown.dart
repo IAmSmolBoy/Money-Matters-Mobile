@@ -5,7 +5,7 @@ class FilterDropdown extends StatelessWidget {
   String title;
   List<String> itemList;
   int? initialValue;
-  Function? changeVal;
+  void Function(int)? changeVal;
   FilterDropdown(this.title, this.itemList, [this.changeVal, this.initialValue]);
 
   @override

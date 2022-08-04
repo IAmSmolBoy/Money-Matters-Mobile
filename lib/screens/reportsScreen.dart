@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:moneymattersmobile/models/transaction.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/services/firestore.dart';
+import 'package:moneymattersmobile/widgets/homeWidgets/filterDropdown.dart';
 import 'package:moneymattersmobile/widgets/homeWidgets/homeSecTitle.dart';
 import 'package:moneymattersmobile/widgets/screenHeader.dart';
 
@@ -75,7 +76,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 }
           
                 if (snapshot.hasData && snapshot.connectionState == ConnectionState.active) {
-                  List<Transaction> reportsTransactionList = snapshot.data!.where((e) => e.date.month == DateTime.now().month).toList();
+                  List<Transaction> reportsTransactionList = snapshot.data!.where((e) => e.date.month == filterMonth).toList();
                   List<List<Transaction>> transactionsByDay = daysList
                     .map<List<Transaction>>((e) => filter<Transaction>(reportsTransactionList, (trans) => trans.date.day == e))
                     .toList();
@@ -109,7 +110,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 return ScreenHeader("Reports",
                     Column(
                       children: [
-                        HomeSectionTitle("Net Income for ${monthList[DateTime.now().month]}"),
+                        HomeSectionTitle("Net Income for ${monthList[filterMonth]}"),
                         const SizedBox(height: 5),
                         SizedBox(
                           width: 400,
@@ -167,11 +168,18 @@ class _ReportsScreenState extends State<ReportsScreen> {
                             )
                           ) : Container(),
                         ),
-                        Text("Day in ${monthList[DateTime.now().month]}", style: TextStyle(
+                        Text("Day in ${monthList[filterMonth]}", style: TextStyle(
                           color: Theme.of(context).primaryColor,
                           fontSize: 20,
                           fontWeight: FontWeight.bold
-                        ),)
+                        ),),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            HomeSectionTitle("Filter"),
+                            FilterDropdown("Month: ", monthList, (newMonth) => setState(() {filterMonth = newMonth;}), filterMonth),
+                          ],
+                        ),
                       ],
                     )
                 );

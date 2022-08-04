@@ -6,7 +6,6 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:moneymattersmobile/models/user.dart';
-import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/services/auth.dart';
 import 'package:moneymattersmobile/services/firestore.dart';
 import 'package:moneymattersmobile/services/storage.dart';
@@ -16,9 +15,10 @@ import 'package:path/path.dart';
 
 class EditProfileScreen extends StatefulWidget  {
 
-  void Function(void Function()) settingsSetState;
+  // void Function(void Function()) settingsSetState;
+  void Function() getUserInfo;
   
-  EditProfileScreen({required this.settingsSetState, Key? key}) : super(key: key);
+  EditProfileScreen({required this.getUserInfo, Key? key}) : super(key: key);
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -276,8 +276,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res)));
                                     } else {
                                       User updatedUser = User(user.id, username, email, password, pfpImg != null ? basename(pfpImg?.path ?? "") : currUser?.pfp ?? "");
-                                      getUserDoc(user.id).update(updatedUser.toJSON());
-                                      widget.settingsSetState(() {});
+                                      await getUserDoc(user.id).update(updatedUser.toJSON());
+                                      widget.getUserInfo();
                                       snackbar.close();
                                       Navigator.pop(context);
                                     }

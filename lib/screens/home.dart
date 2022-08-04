@@ -22,8 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   //filter values
-  int filterMonth = DateTime.now().month;
-  String filterCategory = "None";
+  // int filterMonth = DateTime.now().month;
+  // String filterCategory = "None";
   List<String> homeFilterCatList =
       allCategories.values.expand((e) => e).toList();
 

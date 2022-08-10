@@ -11,6 +11,7 @@ import 'package:moneymattersmobile/services/storage.dart';
 import 'package:moneymattersmobile/widgets/screenFormat.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
 
@@ -38,7 +39,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     bool darkMode = Provider.of<ThemeProvider>(context).theme == ThemeMode.dark;
     return ScreenFormat(
-      currUser == null || userPfp.isEmpty ?
+      currUser == null ?
         const Center(child: CircularProgressIndicator())
       : Form(
         child: Container(
@@ -151,6 +152,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onChanged: (bool val) {
                         setState(() {
                           darkMode = val;
+                          SharedPreferences.getInstance().then((prefs) => prefs.setBool("darkMode", val));
                           Provider.of<ThemeProvider>(context, listen: false).toggleTheme(darkMode);
                         });
                       }

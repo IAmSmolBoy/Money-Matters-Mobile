@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:moneymattersmobile/main.dart';
 import 'package:moneymattersmobile/models/user.dart';
+import 'package:moneymattersmobile/providers/themeProvider.dart';
 import 'package:moneymattersmobile/screenData.dart';
 import 'package:moneymattersmobile/screens/registerScreen.dart';
+import 'package:moneymattersmobile/screens/resetPasswordScreen.dart';
 import 'package:moneymattersmobile/services/auth.dart';
 import 'package:moneymattersmobile/services/firestore.dart';
 import 'package:moneymattersmobile/widgets/registerSignInWidgets/registerSignInPassword.dart';
 import 'package:moneymattersmobile/widgets/registerSignInWidgets/registerSignInTextField.dart';
 import 'package:moneymattersmobile/widgets/registerSignInWidgets/regsterSignInButton.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInScreen extends StatefulWidget {
   String? username, password;
@@ -28,21 +32,41 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   void initState() {
     readUsers().then((value) => setState(() {userList = value;}));
+    Future.delayed(const Duration(seconds: 3), () => setState(() => splashScreen = false));
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      SharedPreferences.getInstance().then((prefs) {
+        bool darkMode = prefs.getBool("darkMode") ?? true;
+        Provider.of<ThemeProvider>(context, listen: false).toggleTheme(darkMode);
+      });
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return splashScreen ? Scaffold(
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        child: Center(
+          child: SizedBox(
+            child: Image.asset(
+              "images/Splash Screen Logo.png",
+              width: MediaQuery.of(context).size.width - 10,
+              height: MediaQuery.of(context).size.height - 10,
+            ),
+          )
+        ),
+      ),
+    ) : Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xff191720),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         title: RichText(
-          text: const TextSpan(
-            style: TextStyle(fontSize: 25.0, color: Color(0xFFF8F9FA)),
+          text: TextSpan(
+            style: const TextStyle(fontSize: 25.0),
             children: <TextSpan>[
-              TextSpan(text: 'Money', style: TextStyle(color: Colors.green)),
-              TextSpan(text: 'Matters'),
+              const TextSpan(text: 'Money', style: TextStyle(color: Colors.green)),
+              TextSpan(text: 'Matters', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
             ],
           ),
         ),
@@ -80,13 +104,13 @@ class _SignInScreenState extends State<SignInScreen> {
                                       TextInputType.text,
                                       "Username",
                                       (val) { widget.username = val!; },
-                                      (val) => null,
+                                      (val) => val == null ? "Please enter your username" : null,
                                     ),
                                     RegisterSignInPassword(
                                       passwordObscurity,
                                       () => setState(() { passwordObscurity = !passwordObscurity; }),
                                       (val) { widget.password = val!; },
-                                      (val) => null,
+                                      (val) => val == null ? "Please enter your password" : null,
                                     ),
                                   ],
                                 ),
@@ -113,6 +137,25 @@ class _SignInScreenState extends State<SignInScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Text("Forgot your password? ", style: bodyText,),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero
+                              ),
+                              onPressed: () {
+                                Navigator.push(context, PageTransition(
+                                  child: ForgetPasswordScreen(),
+                                  type: PageTransitionType.topToBottomJoined,
+                                  childCurrent: widget
+                                ));
+                              },
+                              child: Text("Reset it.", style: bodyText,),
+                            )
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
                             Text("Don't have an account? ", style: bodyText,),
                             TextButton(
                               style: TextButton.styleFrom(
@@ -128,7 +171,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   )
                                 );
                               },
-                              child: Text("Register", style: bodyText.copyWith(color: Colors.white),),
+                              child: Text("Register", style: bodyText,),
                             )
                           ],
                         ),

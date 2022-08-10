@@ -39,6 +39,17 @@ Future<String> register(String username, String email, String password) async {
   return result;
 }
 
+Future<String> resetPass(String email) async {
+  String result = "Error";
+  try {
+    await auth.sendPasswordResetEmail(email: email);
+    result = "Check your email for the reset password email";
+  } on firebase_auth.FirebaseException catch (e) {
+    result = e.message ?? "Error";
+  }
+  return result;
+}
+
 //retrieving current user info
 Future<User?> getCurrUser() async {
   firebase_auth.User? currUser = auth.currentUser;

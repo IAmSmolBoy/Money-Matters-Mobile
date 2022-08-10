@@ -15,9 +15,7 @@ class RegisterSignInTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextFormField(
-        style: bodyText.copyWith(
-          color: Colors.white,
-        ),
+        style: bodyText,
         onSaved: onSavedFunc,
         validator: validatorFunc,
         keyboardType: inputType,

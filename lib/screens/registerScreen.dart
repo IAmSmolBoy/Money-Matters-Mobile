@@ -35,16 +35,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff191720),
+      // backgroundColor: const Color(0xff191720),
       appBar: AppBar(
-        backgroundColor: const Color(0xff191720),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         title: RichText(
-          text: const TextSpan(
-            style: TextStyle(fontSize: 25.0, color: Color(0xFFF8F9FA)),
+          text: TextSpan(
+            style: const TextStyle(fontSize: 25.0),
             children: <TextSpan>[
-              TextSpan(text: 'Money', style: TextStyle(color: Colors.green)),
-              TextSpan(text: 'Matters'),
+              const TextSpan(text: 'Money', style: TextStyle(color: Colors.green)),
+              TextSpan(text: 'Matters', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
             ],
           ),
         ),
@@ -120,7 +120,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     )
                                   );
                                 },
-                                child: Text("Sign In", style: bodyText.copyWith(color: Colors.white),),
+                                child: Text("Sign In", style: bodyText,),
                               ),
                             ],
                           ),

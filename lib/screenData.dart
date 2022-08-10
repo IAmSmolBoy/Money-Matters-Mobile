@@ -14,28 +14,27 @@ Map<String, List<String>> allCategories = {
 int filterMonth = DateTime.now().month;
 String filterCategory = "None";
 
-//themes
-ThemeMode theme = ThemeMode.dark;
+bool splashScreen = true;
 
 //for sign in and register screens
 const bgColour = Color(0xff191720);
 const textFieldFill = Color(0xff1E1C24);
 var headlines = GoogleFonts.poppins(textStyle: const TextStyle(
-  color: Colors.white,
+  // color: Colors.white,
   fontSize: 34,
   fontWeight: FontWeight.w500
 ));
 var bodyText = GoogleFonts.poppins(textStyle: const TextStyle(
-    color: Colors.grey,
+    // color: Colors.grey,
     fontSize: 15,
 ));
 var buttonText = GoogleFonts.poppins(textStyle: const TextStyle(
-    color: Colors.black87,
+    // color: Colors.black87,
     fontSize:16,
     fontWeight: FontWeight.bold
 ));
 var bodyText2 = GoogleFonts.poppins(textStyle: const TextStyle(
-    color: Colors.white,
+    // color: Colors.white,
     fontSize: 28,
     fontWeight: FontWeight.w500
 ));
